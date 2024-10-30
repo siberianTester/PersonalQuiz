@@ -16,7 +16,7 @@ final class ResultViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setHidesBackButton(true, animated: false)
+        navigationItem.hidesBackButton = true
         getResult()
     }
     
@@ -30,23 +30,23 @@ final class ResultViewController: UIViewController {
     }
     
     private func getResult() {
-        var animals: [String: Int] = ["cat": 0, "dog": 0, "rabbit": 0, "turtle": 0]
+        var frequencyOfAnimals: [Animal: Int] = [:]
+        let animals = answers.map { $0.animal }
         
-        for answer in answers {
-            switch answer.animal {
-            case .cat: animals["cat"]! += 1
-            case .dog: animals["dog"]! += 1
-            case .rabbit: animals["rabbit"]! += 1
-            default: animals["turtle"]! += 1
+        for animal in animals {
+            if let animalTypeCount = frequencyOfAnimals[animal] {
+                frequencyOfAnimals.updateValue(animalTypeCount + 1, forKey: animal)
+            } else {
+                frequencyOfAnimals[animal] = 1
             }
         }
         
-        let finalAnimal = animals.max { a, b in a.value < b.value }
+        let finalAnimal = frequencyOfAnimals.max { a, b in a.value < b.value }
         
         switch finalAnimal?.key {
-        case "cat": printResult(animal: .cat)
-        case "dog": printResult(animal: .dog)
-        case "rabbit": printResult(animal: .rabbit)
+        case .cat: printResult(animal: .cat)
+        case .dog: printResult(animal: .dog)
+        case .rabbit: printResult(animal: .rabbit)
         default: printResult(animal: .turtle)
         }
     }
